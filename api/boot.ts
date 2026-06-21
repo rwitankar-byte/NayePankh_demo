@@ -11,14 +11,30 @@ import { Paths } from "@contracts/constants";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
+const localOriginPattern = /^http:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?$/;
+const vercelProjectOriginPattern =
+  /^https:\/\/app(?:-[a-z0-9-]+)?-rwitankar-pals-projects\.vercel\.app$/;
+
+function allowedOrigin(origin: string) {
+  if (
+    origin === env.frontendUrl ||
+    localOriginPattern.test(origin) ||
+    vercelProjectOriginPattern.test(origin)
+  ) {
+    return origin;
+  }
+
+  return null;
+}
+
 app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
 app.use(
   "/api/*",
   cors({
-    origin: env.frontendUrl,
+    origin: allowedOrigin,
     credentials: true,
-    allowHeaders: ["Content-Type"],
-    allowMethods: ["GET", "POST", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization", "x-trpc-source"],
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   }),
 );
 app.get("/api/health", (c) => c.json({ ok: true }));

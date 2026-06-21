@@ -1,0 +1,7 @@
+# The Hono API is deployed as the Railway backend. Exclude it from the static
+# Vite frontend deployment so Vercel does not treat its modules as functions.
+api/
+db/
+contracts/
+compose.yaml
+*.test.ts

@@ -40,8 +40,9 @@ if (env.isProduction) {
   const { serveStaticFiles } = await import("./lib/vite");
   serveStaticFiles(app);
 
-  const port = parseInt(process.env.PORT || "3000");
-  serve({ fetch: app.fetch, port }, () => {
-    console.log(`Server running on http://localhost:${port}/`);
+  const port = parseInt(process.env.PORT || "8080", 10);
+  const hostname = "0.0.0.0";
+  serve({ fetch: app.fetch, hostname, port }, () => {
+    console.log(`Server running on http://${hostname}:${port}/`);
   });
 }
